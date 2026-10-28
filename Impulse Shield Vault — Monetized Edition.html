@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impulse Shield Vault — Monetized Edition</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-8">
+  <div class="max-w-3xl mx-auto space-y-6">
+    <!-- Top Header & Hourly Wage Bar -->
+    <header class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="inline-block text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
+            Monetized Edition • Google AdSense Integration Ready
+          </span>
+          <h1 class="text-2xl font-bold text-white">72-Hour Impulse Shield &amp; Trophy Vault</h1>
+          <p class="text-sm text-slate-400 mt-1">
+            Lock temptations for 72 hours, stress-test urges with the Debate Coach, and spot your #1 emotional spending trigger.
+          </p>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center gap-3 self-start sm:self-auto">
+          <div>
+            <label for="hourlyRateInput" class="block text-[11px] uppercase tracking-wider text-slate-400 font-medium">Your Hourly Value (₹/hr)</label>
+            <input
+              id="hourlyRateInput"
+              type="number"
+              min="50"
+              step="50"
+              value="500"
+              class="w-28 bg-transparent text-lg font-bold text-emerald-400 focus:outline-none border-b border-slate-700 focus:border-emerald-400"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Scoreboard Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4">
+          <p class="text-xs text-slate-400 uppercase font-medium">Locked in 72h Cooling</p>
+          <p id="lockedTotal" class="text-2xl font-bold text-amber-400 mt-1">₹0</p>
+          <p id="lockedHours" class="text-xs text-slate-400 mt-0.5">0 hrs of work</p>
+        </div>
+        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4">
+          <p class="text-xs text-slate-400 uppercase font-medium">Phantom Trophy Bank (Rescued)</p>
+          <p id="rescuedTotal" class="text-2xl font-bold text-emerald-400 mt-1">₹0</p>
+          <p id="rescuedHours" class="text-xs text-slate-400 mt-0.5">0 hrs of life saved</p>
+        </div>
+        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4">
+          <p class="text-xs text-slate-400 uppercase font-medium">5-Year Invested Value</p>
+          <p id="futureWealthTotal" class="text-2xl font-bold text-indigo-400 mt-1">₹0</p>
+          <p class="text-xs text-slate-400 mt-0.5">If rescued cash grows at 12%/yr</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Top Responsive Ad Unit (Slot 1) -->
+    <div id="adUnitTop" class="bg-slate-900/60 border border-dashed border-slate-800 rounded-2xl p-4 text-center">
+      <div class="flex items-center justify-between text-[11px] text-slate-400 mb-2">
+        <span class="uppercase tracking-wider font-medium">Advertisement</span>
+        <span id="adTopStatus" class="text-indigo-400">Google AdSense • Ready to Connect</span>
+      </div>
+      <div class="bg-slate-950/80 border border-slate-800 rounded-xl py-6 px-4 flex flex-col items-center justify-center min-h-[90px]">
+        <p class="text-xs font-semibold text-slate-300">Responsive Banner Ad Slot</p>
+        <p class="text-[11px] text-slate-400 mt-1">
+          Configured for Publisher ID: <span id="adPubDisplay" class="font-mono text-indigo-400">ca-pub-XXXXXXXXXXXXXXXX</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Emotional Trigger Danger-Zone Radar -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="text-base font-semibold text-white">🎯 Emotional Trigger Danger-Zone Radar</h2>
+          <p class="text-xs text-slate-400">Tracks both locked and rescued urges to expose which mood triggers your biggest spending spikes.</p>
+        </div>
+        <span id="topDangerBadge" class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 self-start sm:self-auto">
+          Analyzing triggers...
+        </span>
+      </div>
+      <div id="triggerRadarList" class="space-y-2.5"></div>
+    </section>
+
+    <!-- Lock an Impulse Item Form -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <h2 class="text-base font-semibold text-white mb-4">Lock a New Temptation in the 72-Hour Vault</h2>
+      <form id="vaultForm" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+        <div class="sm:col-span-5">
+          <label for="itemName" class="block text-xs text-slate-400 mb-1">Item You Want to Buy</label>
+          <input
+            id="itemName"
+            type="text"
+            placeholder="e.g., Wireless Earbuds, Sneakers"
+            required
+            class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+          >
+        </div>
+        <div class="sm:col-span-3">
+          <label for="itemPrice" class="block text-xs text-slate-400 mb-1">Price (₹)</label>
+          <input
+            id="itemPrice"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="3999"
+            required
+            class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+          >
+        </div>
+        <div class="sm:col-span-4">
+          <label for="itemTrigger" class="block text-xs text-slate-400 mb-1">Emotional Trigger</label>
+          <select
+            id="itemTrigger"
+            class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+          >
+            <option value="Late-Night Boredom">🌙 Late-Night Boredom</option>
+            <option value="Social Media Ad">📱 Social Media Ad</option>
+            <option value="Stress / Bad Day">⚡ Stress / Bad Day</option>
+            <option value="Flash Sale FOMO">🔥 Flash Sale FOMO</option>
+            <option value="Genuine Need">✅ Genuine Need</option>
+          </select>
+        </div>
+
+        <!-- Expected Uses & Owned Duplicates -->
+        <div class="sm:col-span-5">
+          <label for="itemUses" class="block text-xs text-slate-400 mb-1">Expected Uses in Next 6 Months</label>
+          <input
+            id="itemUses"
+            type="number"
+            min="1"
+            max="500"
+            value="5"
+            required
+            class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+          >
+        </div>
+        <div class="sm:col-span-4">
+          <label for="itemDuplicates" class="block text-xs text-slate-400 mb-1">Similar Items Already Owned</label>
+          <input
+            id="itemDuplicates"
+            type="number"
+            min="0"
+            max="50"
+            value="1"
+            required
+            class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+          >
+        </div>
+        <div class="sm:col-span-3 flex items-end">
+          <button
+            type="submit"
+            class="w-full rounded-xl bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-semibold py-2.5 px-3 text-sm transition"
+          >
+            🔒 Lock 72h
+          </button>
+        </div>
+      </form>
+      <p id="toastMsg" class="text-xs text-emerald-400 mt-2.5 hidden"></p>
+    </section>
+
+    <!-- Active 72-Hour Cooling Vault + Time Simulator Controls -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h2 class="text-base font-semibold text-white">Active 72-Hour Cooling Vault</h2>
+          <p class="text-xs text-slate-400">Use "⏩ Fast-Forward 24h" to test how items cool down over 3 days.</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button
+            id="fastForwardBtn"
+            type="button"
+            class="text-xs font-medium px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition"
+          >
+            ⏩ Fast-Forward 24h
+          </button>
+          <button
+            id="resetDemoBtn"
+            type="button"
+            class="text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+          >
+            🔄 Reset Demo Data
+          </button>
+          <span id="vaultCount" class="text-xs text-slate-400 ml-1">0 locked</span>
+        </div>
+      </div>
+      <div id="vaultList" class="space-y-4"></div>
+    </section>
+
+    <!-- In-Feed Native Ad Unit (Slot 2) -->
+    <div id="adUnitMid" class="bg-slate-900/60 border border-dashed border-slate-800 rounded-2xl p-4 text-center">
+      <div class="flex items-center justify-between text-[11px] text-slate-400 mb-2">
+        <span class="uppercase tracking-wider font-medium">Sponsored Story / Ad Slot</span>
+        <span class="text-indigo-400">In-Feed Native Ad</span>
+      </div>
+      <div class="bg-slate-950/80 border border-slate-800 rounded-xl py-4 px-4 flex items-center justify-between gap-3 flex-wrap">
+        <div class="text-left">
+          <p class="text-xs font-semibold text-slate-200">Recommended Savings Partner</p>
+          <p class="text-[11px] text-slate-400">High-yield liquid savings accounts to grow your rescued impulse cash.</p>
+        </div>
+        <span class="text-xs px-3 py-1.5 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+          Ad Slot #2
+        </span>
+      </div>
+    </div>
+
+    <!-- Phantom Savings Trophy Bank -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-base font-semibold text-white">🏆 Phantom Savings Trophy Bank</h2>
+          <p class="text-xs text-slate-400">Every impulse you walked away from stays banked here as a win (auto-saved in your browser).</p>
+        </div>
+        <span id="trophyCount" class="text-xs text-emerald-400 font-medium">0 trophies</span>
+      </div>
+      <div id="trophyList" class="space-y-2.5"></div>
+    </section>
+
+    <!-- Google AdSense Live Configuration Bar -->
+    <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-lg">
+      <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+        <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+          <span>⚙️ Google AdSense Settings</span>
+        </h3>
+        <span class="text-[11px] text-slate-400">Enter your IDs below when you're ready</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+        <div class="sm:col-span-5">
+          <label for="adClientInput" class="block text-slate-400 mb-1">Publisher ID (`data-ad-client`)</label>
+          <input
+            id="adClientInput"
+            type="text"
+            placeholder="ca-pub-1234567890123456"
+            class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-white placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500"
+          >
+        </div>
+        <div class="sm:col-span-4">
+          <label for="adSlotInput" class="block text-slate-400 mb-1">Ad Unit Slot ID (`data-ad-slot`)</label>
+          <input
+            id="adSlotInput"
+            type="text"
+            placeholder="1234567890"
+            class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-white placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500"
+          >
+        </div>
+        <div class="sm:col-span-3 flex items-end">
+          <button
+            id="saveAdSettingsBtn"
+            type="button"
+            class="w-full rounded-xl bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-semibold py-2 px-3 text-xs transition"
+          >
+            Save Ad IDs
+          </button>
+        </div>
+      </div>
+      <p id="adSettingsFeedback" class="text-[11px] text-emerald-400 mt-2 hidden"></p>
+    </section>
+  </div>
+
+  <!-- Reverse-Echo-Chamber Debate Coach Modal -->
+  <div
+    id="debateModal"
+    class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+  >
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <span class="inline-block text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 mb-1.5">
+            🧠 Reverse-Echo-Chamber Debate Coach
+          </span>
+          <h3 id="modalItemTitle" class="text-lg font-bold text-white">Wait—Let's Stress-Test This</h3>
+          <p id="modalSubtitle" class="text-xs text-slate-400 mt-0.5"></p>
+        </div>
+        <button
+          id="closeModalBtn"
+          type="button"
+          class="text-slate-400 hover:text-white text-sm px-2 py-1 rounded-lg bg-slate-800"
+        >✕</button>
+      </div>
+
+      <!-- 3 Dynamic Counter-Arguments -->
+      <div id="debateQuestions" class="space-y-2.5 text-xs"></div>
+
+      <!-- Mandatory Reflection Input -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-2">
+        <label for="justificationInput" class="block text-xs font-medium text-slate-300">
+          To unlock anyway, check all 3 boxes above and write a 15+ character justification:
+        </label>
+        <input
+          id="justificationInput"
+          type="text"
+          placeholder="I genuinely need this right now because..."
+          class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+        >
+        <p id="modalErrorMsg" class="text-[11px] text-rose-400 hidden"></p>
+      </div>
+
+      <!-- Modal Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-end gap-2.5 pt-2">
+        <button
+          id="modalRescueBtn"
+          type="button"
+          class="w-full sm:w-auto text-xs font-semibold px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition"
+        >
+          🏆 You're Right — Walk Away &amp; Bank It
+        </button>
+        <button
+          id="modalConfirmBuyBtn"
+          type="button"
+          class="w-full sm:w-auto text-xs font-medium px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-slate-700 transition"
+        >
+          🔓 Unlock &amp; Buy Anyway
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. DEFAULT DEMO DATA & STATE
+    const STORAGE_KEY = 'impulse_shield_vault_v5';
+
+    const DEFAULT_VAULT = [
+      {
+        id: 101,
+        name: 'RGB Mechanical Keycaps Set',
+        price: 3499,
+        trigger: 'Late-Night Boredom',
+        hoursRemaining: 68,
+        expectedUses: 3,
+        ownedDuplicates: 2
+      },
+      {
+        id: 102,
+        name: 'Limited-Drop Streetwear Hoodie',
+        price: 4999,
+        trigger: 'Social Media Ad',
+        hoursRemaining: 41,
+        expectedUses: 12,
+        ownedDuplicates: 4
+      }
+    ];
+
+    const DEFAULT_TROPHIES = [
+      {
+        id: 201,
+        name: 'Smart Coffee Mug Warmer',
+        price: 2499,
+        trigger: 'Flash Sale FOMO',
+        expectedUses: 2,
+        ownedDuplicates: 1
+      }
+    ];
+
+    let hourlyRate = 500;
+    let activeDebateItemId = null;
+    let adClient = 'ca-pub-XXXXXXXXXXXXXXXX';
+    let adSlot = '1234567890';
+    let vaultItems = JSON.parse(JSON.stringify(DEFAULT_VAULT));
+    let trophyItems = JSON.parse(JSON.stringify(DEFAULT_TROPHIES));
+
+    // Save & Load State with localStorage
+    function saveState() {
+      try {
+        const payload = {
+          hourlyRate: hourlyRate,
+          vaultItems: vaultItems,
+          trophyItems: trophyItems,
+          adClient: adClient,
+          adSlot: adSlot
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch (err) {
+        // Safe sandbox fallback
+      }
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.vaultItems) && Array.isArray(parsed.trophyItems)) {
+          hourlyRate = Number(parsed.hourlyRate) > 0 ? Number(parsed.hourlyRate) : 500;
+          vaultItems = parsed.vaultItems;
+          trophyItems = parsed.trophyItems;
+          if (parsed.adClient) adClient = parsed.adClient;
+          if (parsed.adSlot) adSlot = parsed.adSlot;
+
+          document.getElementById('hourlyRateInput').value = String(hourlyRate);
+          document.getElementById('adClientInput').value = adClient !== 'ca-pub-XXXXXXXXXXXXXXXX' ? adClient : '';
+          document.getElementById('adSlotInput').value = adSlot !== '1234567890' ? adSlot : '';
+          document.getElementById('adPubDisplay').textContent = adClient;
+        }
+      } catch (err) {
+        // Fallback
+      }
+    }
+
+    // Helper to safely format text
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Evaluates Cost-Per-Use & Clutter Tax badge
+    function getRealityGrades(item) {
+      const uses = Math.max(1, item.expectedUses || 1);
+      const costPerUse = Math.round(item.price / uses);
+      const dupes = item.ownedDuplicates || 0;
+
+      let cpuBadge = '';
+      if (costPerUse > 500) {
+        cpuBadge = `<span class="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">⚠️ High Cost/Use: ₹${costPerUse.toLocaleString('en-IN')}/use</span>`;
+      } else if (costPerUse > 150) {
+        cpuBadge = `<span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">⚖️ Moderate: ₹${costPerUse.toLocaleString('en-IN')}/use</span>`;
+      } else {
+        cpuBadge = `<span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">✨ Solid Utility: ₹${costPerUse.toLocaleString('en-IN')}/use</span>`;
+      }
+
+      let clutterBadge = '';
+      if (dupes >= 3) {
+        clutterBadge = `<span class="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">📦 Heavy Clutter Tax (${dupes} owned)</span>`;
+      } else if (dupes >= 1) {
+        clutterBadge = `<span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">📦 Duplicate Redundancy (${dupes} owned)</span>`;
+      } else {
+        clutterBadge = `<span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">📦 Zero Clutter Tax (0 owned)</span>`;
+      }
+
+      return { costPerUse, cpuBadge, clutterBadge };
+    }
+
+    // Builds 3 tailored Debate Coach arguments
+    function buildDebatePrompts(item) {
+      const workHours = (item.price / hourlyRate).toFixed(1);
+      const uses = Math.max(1, item.expectedUses || 1);
+      const costPerUse = Math.round(item.price / uses);
+      const fiveYearValue = Math.round(item.price * Math.pow(1.12, 5));
+
+      const q1 = `1. Work-Life Tradeoff: Are you willing to trade ${workHours} full hours of your labor (or ₹${fiveYearValue.toLocaleString('en-IN')} in 5-year invested wealth) for "${item.name}"?`;
+
+      let q2 = '';
+      if (item.trigger !== 'Genuine Need') {
+        q2 = `2. Trigger Check (${item.trigger}): You logged this urge under "${item.trigger}". If that mood passes tomorrow, will you still care about owning this?`;
+      } else {
+        q2 = `2. 72-Hour Patience Check: Even for a genuine need, waiting the remaining ${item.hoursRemaining} hours costs ₹0. Why rush the checkout today?`;
+      }
+
+      let q3 = '';
+      if (item.ownedDuplicates > 0) {
+        q3 = `3. Clutter & Utility Reality: You already own ${item.ownedDuplicates} similar item(s) at home, and each use will cost ₹${costPerUse.toLocaleString('en-IN')}. Why can't your existing item do the job?`;
+      } else {
+        q3 = `3. Cost-Per-Use Reality: At ${uses} expected uses in 6 months, you're paying ₹${costPerUse.toLocaleString('en-IN')} every single time you touch this item.`;
+      }
+
+      return [q1, q2, q3];
+    }
+
+    // Renders Emotional Trigger Danger-Zone Analytics
+    function renderTriggerRadar() {
+      const radarEl = document.getElementById('triggerRadarList');
+      const badgeEl = document.getElementById('topDangerBadge');
+      const allItems = [...vaultItems, ...trophyItems];
+
+      if (allItems.length === 0) {
+        badgeEl.textContent = 'No triggers logged yet';
+        radarEl.innerHTML = `<p class="text-xs text-slate-400">Lock an item below to see your emotional spending breakdown.</p>`;
+        return;
+      }
+
+      const totalsByTrigger = {};
+      let grandTotal = 0;
+
+      for (const item of allItems) {
+        const t = item.trigger || 'Other';
+        totalsByTrigger[t] = (totalsByTrigger[t] || 0) + item.price;
+        grandTotal += item.price;
+      }
+
+      const sorted = Object.entries(totalsByTrigger).sort((a, b) => b[1] - a[1]);
+      const [topTrigger, topAmount] = sorted[0];
+      badgeEl.textContent = `#1 Danger Zone: ${topTrigger} (₹${topAmount.toLocaleString('en-IN')})`;
+
+      radarEl.innerHTML = sorted.map(([triggerName, amount]) => {
+        const pct = grandTotal > 0 ? Math.round((amount / grandTotal) * 100) : 0;
+        const hrs = (amount / hourlyRate).toFixed(1);
+        return `
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-medium text-slate-200">${escapeHtml(triggerName)}</span>
+              <span class="text-slate-400">₹${amount.toLocaleString('en-IN')} (${hrs} work-hrs • ${pct}%)</span>
+            </div>
+            <div class="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+              <div class="h-full bg-gradient-to-r from-indigo-500 to-rose-500 rounded-full" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 2. RENDER FUNCTION
+    function renderApp() {
+      saveState();
+
+      const lockedTotalEl = document.getElementById('lockedTotal');
+      const lockedHoursEl = document.getElementById('lockedHours');
+      const rescuedTotalEl = document.getElementById('rescuedTotal');
+      const rescuedHoursEl = document.getElementById('rescuedHours');
+      const futureWealthEl = document.getElementById('futureWealthTotal');
+      const vaultCountEl = document.getElementById('vaultCount');
+      const trophyCountEl = document.getElementById('trophyCount');
+      const vaultListEl = document.getElementById('vaultList');
+      const trophyListEl = document.getElementById('trophyList');
+
+      // Sum locked items
+      const lockedSum = vaultItems.reduce((acc, item) => acc + item.price, 0);
+      const lockedWorkHours = (lockedSum / hourlyRate).toFixed(1);
+
+      // Sum rescued trophy items
+      const rescuedSum = trophyItems.reduce((acc, item) => acc + item.price, 0);
+      const rescuedWorkHours = (rescuedSum / hourlyRate).toFixed(1);
+
+      // 5-year compound growth at 12% annual return
+      const fiveYearCompound = Math.round(rescuedSum * Math.pow(1.12, 5));
+
+      lockedTotalEl.textContent = '₹' + lockedSum.toLocaleString('en-IN');
+      lockedHoursEl.textContent = lockedWorkHours + ' hrs of your work locked';
+      rescuedTotalEl.textContent = '₹' + rescuedSum.toLocaleString('en-IN');
+      rescuedHoursEl.textContent = rescuedWorkHours + ' hrs of life saved';
+      futureWealthEl.textContent = '₹' + fiveYearCompound.toLocaleString('en-IN');
+
+      vaultCountEl.textContent = vaultItems.length + ' locked';
+      trophyCountEl.textContent = trophyItems.length + (trophyItems.length === 1 ? ' trophy' : ' trophies');
+
+      // Update Trigger Radar
+      renderTriggerRadar();
+
+      // Render Vault List
+      if (vaultItems.length === 0) {
+        vaultListEl.innerHTML = `
+          <div class="text-center py-8 border border-dashed border-slate-800 rounded-xl text-slate-400 text-sm">
+            Your 72-hour vault is clear! Lock your next shopping urge above before checking out.
+          </div>
+        `;
+      } else {
+        vaultListEl.innerHTML = vaultItems.map(item => {
+          const itemWorkHours = (item.price / hourlyRate).toFixed(1);
+          const itemFiveYear = Math.round(item.price * Math.pow(1.12, 5));
+          const { cpuBadge, clutterBadge } = getRealityGrades(item);
+
+          const cooledDown = item.hoursRemaining <= 0;
+          const timerBadge = cooledDown
+            ? `<span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">✅ 72h Cooled Down — Ready to Decide</span>`
+            : `<span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">⏳ ${item.hoursRemaining}h left</span>`;
+
+          return `
+            <div class="bg-slate-950/75 border border-slate-800 rounded-xl p-4 space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-1.5">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-semibold text-white text-sm">${escapeHtml(item.name)}</span>
+                    <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                      ${escapeHtml(item.trigger)}
+                    </span>
+                    ${timerBadge}
+                  </div>
+                  <p class="text-xs text-slate-400">
+                    Price: <strong class="text-slate-200">₹${item.price.toLocaleString('en-IN')}</strong> •
+                    Costs <strong class="text-amber-400">${itemWorkHours} hrs of work</strong> •
+                    5-Yr Invested Value: <strong class="text-indigo-400">₹${itemFiveYear.toLocaleString('en-IN')}</strong>
+                  </p>
+                  <div class="flex items-center gap-2 flex-wrap pt-0.5">
+                    ${cpuBadge}
+                    ${clutterBadge}
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                  <button
+                    type="button"
+                    data-debate-id="${item.id}"
+                    class="text-xs font-medium px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                  >
+                    🔓 Attempt Unlock
+                  </button>
+                  <button
+                    type="button"
+                    data-rescue-id="${item.id}"
+                    class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 transition"
+                  >
+                    🏆 Walk Away &amp; Bank
+                  </button>
+                </div>
+              </div>
+
+              <!-- Interactive Simulator Controls per Card -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-800/80 text-xs">
+                <div class="flex items-center justify-between gap-3 bg-slate-900/70 rounded-lg px-3 py-2">
+                  <label class="text-slate-400">Expected 6-Mo Uses: <strong class="text-white">${item.expectedUses}x</strong></label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="60"
+                    value="${item.expectedUses}"
+                    data-uses-id="${item.id}"
+                    class="w-28 accent-indigo-500 cursor-pointer"
+                  >
+                </div>
+                <div class="flex items-center justify-between gap-3 bg-slate-900/70 rounded-lg px-3 py-2">
+                  <span class="text-slate-400">Similar Owned at Home: <strong class="text-white">${item.ownedDuplicates}</strong></span>
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      data-dupe-delta="-1"
+                      data-dupe-id="${item.id}"
+                      class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold"
+                    >-</button>
+                    <button
+                      type="button"
+                      data-dupe-delta="1"
+                      data-dupe-id="${item.id}"
+                      class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold"
+                    >+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Trophy Bank List
+      if (trophyItems.length === 0) {
+        trophyListEl.innerHTML = `
+          <div class="text-center py-6 border border-dashed border-slate-800 rounded-xl text-slate-400 text-xs">
+            Walk away from a locked item above to claim your first Phantom Savings Trophy!
+          </div>
+        `;
+      } else {
+        trophyListEl.innerHTML = trophyItems.map(item => {
+          const savedHours = (item.price / hourlyRate).toFixed(1);
+          return `
+            <div class="flex items-center justify-between bg-emerald-950/20 border border-emerald-500/20 rounded-xl px-4 py-3">
+              <div>
+                <p class="text-sm font-medium text-emerald-300">Skipped: ${escapeHtml(item.name)}</p>
+                <p class="text-xs text-slate-400">Trigger beat: ${escapeHtml(item.trigger)} • Saved ${savedHours} work-hours</p>
+              </div>
+              <span class="text-sm font-bold text-emerald-400">+₹${item.price.toLocaleString('en-IN')}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Attach listeners to "Walk Away & Bank" buttons
+      document.querySelectorAll('[data-rescue-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.getAttribute('data-rescue-id'));
+          rescueImpulse(id);
+        });
+      });
+
+      // Attach listeners to "Attempt Unlock" Debate Coach buttons
+      document.querySelectorAll('[data-debate-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.getAttribute('data-debate-id'));
+          openDebateModal(id);
+        });
+      });
+
+      // Attach listeners to Expected Uses sliders
+      document.querySelectorAll('[data-uses-id]').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+          const id = Number(slider.getAttribute('data-uses-id'));
+          const target = vaultItems.find(item => item.id === id);
+          if (target) {
+            target.expectedUses = Number(e.target.value);
+            renderApp();
+          }
+        });
+      });
+
+      // Attach listeners to Clutter Tax +/- buttons
+      document.querySelectorAll('[data-dupe-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.getAttribute('data-dupe-id'));
+          const delta = Number(btn.getAttribute('data-dupe-delta'));
+          const target = vaultItems.find(item => item.id === id);
+          if (target) {
+            target.ownedDuplicates = Math.max(0, (target.ownedDuplicates || 0) + delta);
+            renderApp();
+          }
+        });
+      });
+    }
+
+    // 3. EVENT HANDLERS & DEBATE MODAL LOGIC
+    function openDebateModal(id) {
+      const item = vaultItems.find(i => i.id === id);
+      if (!item) return;
+      activeDebateItemId = id;
+
+      document.getElementById('modalItemTitle').textContent = `Unlock "${item.name}" (₹${item.price.toLocaleString('en-IN')})?`;
+      document.getElementById('modalSubtitle').textContent = `Your Debate Coach generated 3 reality checks based on your numbers. Check each box to acknowledge:`;
+      document.getElementById('justificationInput').value = '';
+      document.getElementById('modalErrorMsg').classList.add('hidden');
+
+      const prompts = buildDebatePrompts(item);
+      document.getElementById('debateQuestions').innerHTML = prompts.map((text, idx) => `
+        <label class="flex items-start gap-2.5 bg-slate-950/90 border border-slate-800 rounded-xl p-3 cursor-pointer hover:border-slate-700">
+          <input type="checkbox" class="debate-check mt-0.5 accent-rose-500" data-check-idx="${idx}">
+          <span class="text-slate-300 leading-relaxed">${escapeHtml(text)}</span>
+        </label>
+      `).join('');
+
+      document.getElementById('debateModal').classList.remove('hidden');
+    }
+
+    function closeDebateModal() {
+      activeDebateItemId = null;
+      document.getElementById('debateModal').classList.add('hidden');
+    }
+
+    document.getElementById('closeModalBtn').addEventListener('click', closeDebateModal);
+
+    document.getElementById('modalRescueBtn').addEventListener('click', () => {
+      if (activeDebateItemId !== null) {
+        const idToRescue = activeDebateItemId;
+        closeDebateModal();
+        rescueImpulse(idToRescue);
+      }
+    });
+
+    document.getElementById('modalConfirmBuyBtn').addEventListener('click', () => {
+      const checks = Array.from(document.querySelectorAll('.debate-check'));
+      const allChecked = checks.length === 3 && checks.every(c => c.checked);
+      const reason = document.getElementById('justificationInput').value.trim();
+      const errorEl = document.getElementById('modalErrorMsg');
+
+      if (!allChecked || reason.length < 15) {
+        errorEl.textContent = 'Hold on! You must check all 3 reality-check boxes and write at least 15 characters explaining why you need this.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      const item = vaultItems.find(i => i.id === activeDebateItemId);
+      if (item) {
+        vaultItems = vaultItems.filter(i => i.id !== activeDebateItemId);
+        showToast(`Unlocked "${item.name}" after passing the Debate Coach check.`);
+      }
+      closeDebateModal();
+      renderApp();
+    });
+
+    function rescueImpulse(id) {
+      const found = vaultItems.find(item => item.id === id);
+      if (!found) return;
+      vaultItems = vaultItems.filter(item => item.id !== id);
+      trophyItems.unshift(found);
+      showToast(`Rescued ₹${found.price.toLocaleString('en-IN')}! Added "${found.name}" to your Trophy Bank.`);
+      renderApp();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastMsg');
+      toast.textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+
+    // Fast-Forward 24h & Reset Demo buttons
+    document.getElementById('fastForwardBtn').addEventListener('click', () => {
+      if (vaultItems.length === 0) return;
+      vaultItems.forEach(item => {
+        item.hoursRemaining = Math.max(0, item.hoursRemaining - 24);
+      });
+      showToast('Fast-forwarded 24 hours! Check your updated cooling timers.');
+      renderApp();
+    });
+
+    document.getElementById('resetDemoBtn').addEventListener('click', () => {
+      hourlyRate = 500;
+      document.getElementById('hourlyRateInput').value = '500';
+      vaultItems = JSON.parse(JSON.stringify(DEFAULT_VAULT));
+      trophyItems = JSON.parse(JSON.stringify(DEFAULT_TROPHIES));
+      showToast('Demo data restored!');
+      renderApp();
+    });
+
+    document.getElementById('hourlyRateInput').addEventListener('input', function(e) {
+      const val = Number(e.target.value);
+      if (val > 0) {
+        hourlyRate = val;
+        renderApp();
+      }
+    });
+
+    // Save AdSense Settings
+    document.getElementById('saveAdSettingsBtn').addEventListener('click', () => {
+      const client = document.getElementById('adClientInput').value.trim();
+      const slot = document.getElementById('adSlotInput').value.trim();
+      const feedback = document.getElementById('adSettingsFeedback');
+
+      if (client) adClient = client;
+      if (slot) adSlot = slot;
+
+      document.getElementById('adPubDisplay').textContent = adClient;
+      feedback.textContent = `Saved! Configured for ${adClient} and Slot ${adSlot}.`;
+      feedback.classList.remove('hidden');
+      setTimeout(() => feedback.classList.add('hidden'), 3500);
+      saveState();
+    });
+
+    document.getElementById('vaultForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nameEl = document.getElementById('itemName');
+      const priceEl = document.getElementById('itemPrice');
+      const triggerEl = document.getElementById('itemTrigger');
+      const usesEl = document.getElementById('itemUses');
+      const dupesEl = document.getElementById('itemDuplicates');
+
+      const name = nameEl.value.trim();
+      const price = Number(priceEl.value);
+      const trigger = triggerEl.value;
+      const expectedUses = Math.max(1, Number(usesEl.value) || 1);
+      const ownedDuplicates = Math.max(0, Number(dupesEl.value) || 0);
+
+      if (!name || price <= 0) return;
+
+      vaultItems.unshift({
+        id: Date.now(),
+        name: name,
+        price: price,
+        trigger: trigger,
+        hoursRemaining: 72,
+        expectedUses: expectedUses,
+        ownedDuplicates: ownedDuplicates
+      });
+
+      nameEl.value = '';
+      priceEl.value = '';
+      usesEl.value = '5';
+      dupesEl.value = '1';
+      showToast(`Locked "${name}" — check its Cost-Per-Use & Trigger Radar impact!`);
+      renderApp();
+    });
+
+    window.onload = function() {
+      loadState();
+      renderApp();
+    };
+  </script>
+</body>
+</html>
